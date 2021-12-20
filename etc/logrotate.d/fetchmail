@@ -1,0 +1,14 @@
+/var/log/fetchmail/fetchmail.log {
+ 
+  daily
+  create 0660 fetchmail root
+  rotate 3
+  delaycompress
+  compress
+  notifempty
+  missingok
+  postrotate
+    create 0660 fetchmail root
+  endscript
+
+}

@@ -1,4 +1,5 @@
-require ["vnd.dovecot.pipe", "copy", "imapsieve", "environment", "imap4flags"];
+require ["vnd.dovecot.pipe", "copy", "imapsieve", "environment", "variables", "imap4flags"];
+
 
 if environment :is "imap.cause" "COPY" {
     pipe :copy "learn-spam.sh";

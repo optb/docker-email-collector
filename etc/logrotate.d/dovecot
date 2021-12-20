@@ -1,0 +1,14 @@
+/var/log/dovecot/dovecot.log {
+ 
+  daily
+  create 0660 vmail vmail
+  rotate 3
+  delaycompress
+  compress
+  notifempty
+  missingok
+  postrotate
+    create 0660 vmail vmail
+  endscript
+
+}

@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /usr/local/bin/rspamc learn_ham
+exec rspamc learn_ham
