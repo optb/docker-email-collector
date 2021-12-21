@@ -1,0 +1,21 @@
+version: "3"
+services:
+  dec:
+    image: optb/docker-email-collector:latest
+    container_name: dec
+    environment:
+      FETCHMAIL_ENABLED: 0
+    ports:
+#      - "0.0.0.0:4110:110"
+      - "0.0.0.0:4993:993"
+      - "0.0.0.0:4190:4190"
+    restart: unless-stopped
+    volumes:
+#      - ./config/dovecot/dovecot.conf:/etc/dovecot/dovecot.conf:ro
+      - ./config/dovecot/passwd:/etc/dovecot/passwd:ro
+      - ./config/fetchmail/jobs:/etc/fetchmail/jobs:ro
+      - /etc/letsencrypt/live/{DOMAIN}/cert.pem:/etc/dovecot/cert.pem:ro
+      - /etc/letsencrypt/live/{DOMAIN}/privkey.pem:/etc/dovecot/key.pem:ro
+      - ./data/mail:/srv/mail
+      - ./data/rspamd:/var/lib/rspamd
+
