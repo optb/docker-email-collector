@@ -11,10 +11,10 @@ RUN apt-get update && apt-get upgrade \
 
 ADD ./etc /etc/
 
-ADD ./usr_local_bin_dec /usr/local/bin/dec/
+ADD ./dec /dec/
 
-RUN chmod 0550 /usr/local/bin/dec/docker-entrypoint.sh
+RUN chmod 0550 /dec/docker-entrypoint.sh
 
 ENTRYPOINT ["/sbin/tini","--"]
 
-CMD ["/usr/local/bin/dec/docker-entrypoint.sh","start"]
+CMD ["/dec/docker-entrypoint.sh","start"]

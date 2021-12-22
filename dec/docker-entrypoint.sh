@@ -2,9 +2,12 @@
 set -e
 
 if [ "$1" = 'start' ]; then
+  
+  chmod 0555 /dec
+
   chmod 0400 /etc/fetchmail
-  chmod u+x /usr/local/bin/dec/setup.sh
-  /usr/local/bin/dec/setup.sh
+  chmod u+x /dec/setup.sh
+  /dec/setup.sh
     
   sievec /etc/dovecot/sieve/
   sievec /etc/dovecot/sieve/before.d/
@@ -18,7 +21,7 @@ if [ "$1" = 'start' ]; then
   chmod 0770 /var/lib/rspamd
 
   if [[ "${FETCHMAIL_ENABLED}" = "1" ]]; then
-    /usr/local/bin/dec/fetchmail/start.sh
+    /dec/fetchmail/start.sh
   fi
 
   /etc/init.d/rspamd start

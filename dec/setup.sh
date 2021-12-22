@@ -1,10 +1,12 @@
 #!/bin/bash
 
+chmod 0550 /dec/dovecot/adduser.sh
+
 # Setup fetchmail
-chown root:root /usr/local/bin/dec/fetchmail/start.sh
-chown root:root /usr/local/bin/dec/fetchmail/stop.sh
-chmod 0770 /usr/local/bin/dec/fetchmail/start.sh
-chmod 0770 /usr/local/bin/dec/fetchmail/stop.sh
+chown root:root /dec/fetchmail/start.sh
+chown root:root /dec/fetchmail/stop.sh
+chmod 0770 /dec/fetchmail/start.sh
+chmod 0770 /dec/fetchmail/stop.sh
 
 cat /etc/fetchmail/fetchmailrc > /etc/fetchmailrc
 
@@ -28,5 +30,5 @@ chown -R vmail:vmail /var/log/dovecot
 chmod -R 0770 /var/log/dovecot
 
 # Setup rspamd
-chmod 0555 /usr/local/bin/dec/rspamd/learn-ham.sh
-chmod 0555 /usr/local/bin/dec/rspamd/learn-spam.sh
+chmod 0555 /dec/rspamd/learn-ham.sh
+chmod 0555 /dec/rspamd/learn-spam.sh
