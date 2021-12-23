@@ -86,6 +86,3 @@ Repeat this step for different other accounts and create new files in `config/fe
 3. Use # to uncomment all `fetchall` and `keep` commands in all `config/fetchmail/jobs/`
 4. Start the container with `docker-compose up -d`
 5. Now, it takes some time to collect all your emails from all your mail providers
-
-
-
