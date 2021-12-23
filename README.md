@@ -1,4 +1,4 @@
-Docker Email Collector
+Docker Email Collector (DEC)
 ======================
 # Features
 
@@ -17,10 +17,10 @@ Docker Email Collector
 ## Which problems can be solved by docker-email-collector?
 
 
-1. If your web mail providers store your emails, the NSA, government or mail provider employees could simplier read your emails. What if some successful hacker could entry your email account? 
-Docker-email-collector collects all your emails and store them to your mailbox on the server controlled by you and improve your privacy, because the storage time at your mail provider is very short (this can be solved with normal email client software too, but the client must be online 24/7)
+1. If your email providers store your emails in the cloud, it could be more simple accessible for the NSA, government or mail provider employees. What if some successful hacker could access your email account? 
+Docker-email-collector collects all your emails and store them to your mailbox on the server controlled by you and improve your privacy, because the storage time at your mail provider is very short (this can be solved with normal email client software like outlook or thunderbird too, but the client must be online 24/7)
 
-2. You have multiple email addresses (more than 2) at different email providers, but you want to read your emails in one mailbox (this can be solved with normal email client software like outlook or thunderbird too)
+2. You have multiple email addresses (more than 2) at different email providers, but you want to read your emails in just one mailbox (this can be solved with normal email client software too)
 
 3. You check your emails from different devices, but if you delete or move an email to a folder that must occur for all devices (this can be solved with IMAP too)
 
@@ -28,12 +28,12 @@ Docker-email-collector collects all your emails and store them to your mailbox o
 
 5. You are free to backup or move your emails from server to server or change your email addresses and email providers without hard binding
 
-Each of these problems can be solved separated from the other, but<br>
+Each of these problems can be solved separately, but<br>
 **DEC solves all the listed problems at the same time!**
 
 ## Which problems can NOT be solved by docker-email-collector?
 
-1. There is no Mail Transfer Agent (MTA) like Postfix or Exim inside of DEC, so you cannot receive or send your emails over the network via SMTP. For sending emails you will need to use your original mail providers.
+1. There is no Mail Transfer Agent (MTA) like Postfix or Exim inside of DEC, so you cannot receive or send your emails over the network via SMTP. For sending emails you will need to use your original email providers.
 At the same time, the missing MTA reduce the complexity of DEC. <br>
 If you need your own MTA - use [mailu](https://mailu.io/) or [docker-mailserver](https://github.com/docker-mailserver/docker-mailserver)
 
@@ -44,17 +44,17 @@ If you need your own MTA - use [mailu](https://mailu.io/) or [docker-mailserver]
 Docker and docker-compose (or docker-swarm) installed on your host
 
 ## First step: start with docker-compose
-Use one of the examples in [doc/docker-compose-examples](./doc/docker-compose-examples/) and adjust the files so your settings are matched.
+Use one of the examples in [doc/docker-compose-examples](./doc/docker-compose-examples/) and adjust the settings for your needs.
 
 1. Replace passwd:ro with passwd:rw - this will help you create new users
-2. Create TLS/SSL certificates that should be used for connection encryption: you can create your own self-signed certificates, use certbot for letsenrypt or use your bought certificates. The used example uses the certificates provided by letsencrypt
+2. Create TLS/SSL certificates that should be used for connection encryption: you can create your own self-signed certificates, use certbot for letsenrypt or use your already bought certificates. The used example uses the certificates provided by letsencrypt
 3. Create a `data` folder in your host system and give that folder 0777 permissions, because it will be used later for automatic creation of the needed folders `data/mail` (storage for user emails and sieve scripts) and `data/rspamd` (storage for learning spam data of rspamd). If you want, you can use docker volumes instead.
 4. `config/dovecot/passwd` shows you how to define users for IMAP access.<br>
-Files in `config/fetchmail/jobs` show you how to define jobs for fetchmail to retrieve emails form various email providers.<br>Good documentation for the syntax you can find [here](https://www.linode.com/docs/guides/using-fetchmail-to-retrieve-email/)
+Files in `config/fetchmail/jobs` show you how to define jobs for fetchmail to retrieve emails form various email providers.<br>Good beginner documentation for the syntax you can find [here](https://www.linode.com/docs/guides/using-fetchmail-to-retrieve-email/). More details you will find in [fetchmail manual](https://www.fetchmail.info/fetchmail-man.html)
 5. Start the container with `docker-compose up -d` from the folder where your `docker-compose.yml` is placed
 6. Check with `docker-compose ps` whether IMAP (4993) and Manage-Sieve (4190) are bound and `State` is `Up` for container `dec`
 
-*P.S. use for IMAP other port than standard port 993 (better between 40000 and 60000) to reduce attempts for automatical brute forcing your IMAP*
+*P.S. use for IMAP other port than the standard port 993 (better between 40000 and 60000) to reduce automatical attempts of brute forcing your IMAP*
 
 ## Second step: check your IMAP and Sieve connection
 
@@ -64,7 +64,7 @@ Files in `config/fetchmail/jobs` show you how to define jobs for fetchmail to re
 
 ## Third step: create your user
 
-1. In the terminal on your host naigate to the folder with `docker-compose.yml` and execute `docker exec -it dec /dec/dovecot/adduser.sh {USER} {PASSWORD}` (replace {USER} and {PASSWORD} by your new user and password). <br>Repeat this step for all new users you need.
+1. In the terminal on your host navigate to the folder with `docker-compose.yml` and execute `docker exec -it dec /dec/dovecot/adduser.sh {USER} {PASSWORD}` (replace {USER} and {PASSWORD} by your new user and password). <br>Repeat this step for all new users you need.
 2. Open the file `config/dovecot/passwd` in the text editor like e.g. `nano` and control that your new user {USER} has been added to the end of the file. Additionally, now you can remove all lines with test1 and test2 users because they are not needed anymore
 
 ## Fourth step: new user's IMAP and fetchmail
