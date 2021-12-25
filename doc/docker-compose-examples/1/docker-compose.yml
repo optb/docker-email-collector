@@ -6,7 +6,7 @@ services:
     environment:
       FETCHMAIL_ENABLED: 0
     ports:
-#      - "0.0.0.0:4110:110"
+#      - "0.0.0.0:4143:143"
       - "0.0.0.0:4993:993"
       - "0.0.0.0:4190:4190"
     restart: unless-stopped
@@ -18,4 +18,5 @@ services:
       - /etc/letsencrypt/live/{DOMAIN}/privkey.pem:/etc/dovecot/key.pem:ro
       - ./data/mail:/srv/mail
       - ./data/rspamd:/var/lib/rspamd
+#      - ./data/logs:/var/log
 

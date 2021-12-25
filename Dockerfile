@@ -2,7 +2,8 @@ FROM dovecot/dovecot:latest
 
 LABEL version="1.0.0-beta"
 LABEL description="Collects all your emails to your own server"
-LABEL org.opencontainers.image.authors="t.me/optimister"
+LABEL org.opencontainers.image.url="https://github.com/optb/docker-email-collector"
+LABEL org.opencontainers.image.authors="https://github.com/optb/"
 
 RUN apt-get update && apt-get upgrade \
     && apt-get -y install netbase sudo procps \

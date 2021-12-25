@@ -8,12 +8,12 @@ Docker Email Collector (DEC)
 4. Additionally, you can define server-side [sieve scripts](http://sieve.info/) that allow you automatically classify your emails in different folders
 5. Finally, you can access all your emails, that are already spam-filtered and organized in folders, from various devices on the same time via IMAP (e.g. Outlook, Thunderbird, Android or iOS mail clients, or install some web mailer).
 
-# Data flow diagram
+# Data flow
 
 ![Data flow](./doc/flow-single.png "Data flow chart for single user")
 
 
-# Do you need this?
+# Do you need this solution?
 ## Which problems can be solved by docker-email-collector?
 
 
@@ -48,13 +48,14 @@ Use one of the examples in [doc/docker-compose-examples](./doc/docker-compose-ex
 
 1. Replace passwd:ro with passwd:rw - this will help you create new users
 2. Create TLS/SSL certificates that should be used for connection encryption: you can create your own self-signed certificates, use certbot for letsenrypt or use your already bought certificates. The used example uses the certificates provided by letsencrypt
-3. Create a `data` folder in your host system and give that folder 0777 permissions, because it will be used later for automatic creation of the needed folders `data/mail` (storage for user emails and sieve scripts) and `data/rspamd` (storage for learning spam data of rspamd). If you want, you can use docker volumes instead.
+3. Create a `data` folder in your host system and give that folder 0777 permissions, because it will be used later for automatic creation of the needed folders `data/mail` (storage for user emails and sieve scripts) and `data/rspamd` (storage for learning spam data of rspamd) or `data/logs` (logs, if you activate this). If you want, you can use docker volumes instead.
 4. `config/dovecot/passwd` shows you how to define users for IMAP access.<br>
 Files in `config/fetchmail/jobs` show you how to define jobs for fetchmail to retrieve emails form various email providers.<br>Good beginner documentation for the syntax you can find [here](https://www.linode.com/docs/guides/using-fetchmail-to-retrieve-email/). More details you will find in [fetchmail manual](https://www.fetchmail.info/fetchmail-man.html)
 5. Start the container with `docker-compose up -d` from the folder where your `docker-compose.yml` is placed
 6. Check with `docker-compose ps` whether IMAP (4993) and Manage-Sieve (4190) are bound and `State` is `Up` for container `dec`
+7. Show the current installed versions with `docker exec -it dec /dec/version.sh`
 
-*P.S. use for IMAP other port than the standard port 993 (better between 40000 and 60000) to reduce automatical attempts of brute forcing your IMAP*
+*P.S. use for IMAP other port than the standard port 993 (better between 20000 and 65000) to reduce automatical attempts of brute forcing your IMAP*
 
 ## Second step: check your IMAP and Sieve connection
 
@@ -64,14 +65,14 @@ Files in `config/fetchmail/jobs` show you how to define jobs for fetchmail to re
 
 ## Third step: create your user
 
-1. In the terminal on your host navigate to the folder with `docker-compose.yml` and execute `docker exec -it dec /dec/dovecot/adduser.sh {USER} {PASSWORD}` (replace {USER} and {PASSWORD} by your new user and password). <br>Repeat this step for all new users you need.
+1. In the terminal on your host navigate to the folder with `docker-compose.yml` and execute <br>`docker exec -it dec /dec/dovecot/adduser.sh {USER} {PASSWORD}`<br> (replace {USER} and {PASSWORD} by your new user and password). <br>Repeat this step for all new users you need.
 2. Open the file `config/dovecot/passwd` in the text editor like e.g. `nano` and control that your new user {USER} has been added to the end of the file. Additionally, now you can remove all lines with test1 and test2 users because they are not needed anymore
 
 ## Fourth step: new user's IMAP and fetchmail
 
 1. Shutdown the container with `docker-compose down`
 2. Replace passwd:rw with passwd:ro in the `docker-compose.yml`
-3. Create some profiles in `config/fetchmail/jobs/`, use the [description for fetchmail syntax](https://www.linode.com/docs/guides/using-fetchmail-to-retrieve-email/). At this step always use options `fetchall`,`fetchlimit` and `keep`, because we want to test whether it works in this step
+3. Create some profiles in `config/fetchmail/jobs/`, use the [description for fetchmail syntax](https://www.linode.com/docs/guides/using-fetchmail-to-retrieve-email/). At this step always use options `fetchall`, `fetchlimit` and `keep`, because we want to test whether it works
 4. Change `FETCHMAIL_ENABLED: 0` to `FETCHMAIL_ENABLED: 1` in `docker-compose.yml`
 5. Start the container with `docker-compose up -d` from the folder where your `docker-compose.yml` is placed
 6. Change the thunderbird settings for the `test`-Account to {USER} and {PASSWORD} defined by you in Step 3.1
@@ -83,6 +84,16 @@ Repeat this step for different other accounts and create new files in `config/fe
 
 1. After all tests, shutdown the container with `docker-compose down`
 2. Replace all `skip` commands with `poll` in all must-be-running `config/fetchmail/jobs/`
-3. Use # to uncomment all `fetchall` and `keep` commands in all `config/fetchmail/jobs/`
+3. Use # to uncomment all `keep` commands in all `config/fetchmail/jobs/`
 4. Start the container with `docker-compose up -d`
 5. Now, it takes some time to collect all your emails from all your mail providers
+
+# Additional information
+
+## Dovecot IMAP server
+- `dovecot` configuration is the modified configuration of the original [dovecot/dovecot](https://hub.docker.com/r/dovecot/dovecot) image. You can change it, if you copy [dovecot.conf](https://github.com/optb/docker-email-collector/blob/main/etc/dovecot/dovecot.conf) to your `config`-folder, change the file and mount the changed file to `/etc/dovecot/dovecot.conf` in your `docker-compose.yml`
+- normally exposed standard ports are IMAP (143 - unencrypted and STARTTLS, 993 - encrypted by TLS/SSL) and Manage-Sieve (4190 - unencrypted ans STARTTLS). Standard ports are often checked by automatical bots that try to hack in by brute force or search for vulnerabilities. It would be more secure to change the standard ports to some other higher port numbers (20000-65000)
+## Spam filtering
+- `rspamd` learns spam when you move some unrecognized email to Junk-folder
+- `rspamd` learns ham (not spam) when you move the email that was wrong recognized as spam from Junk-folder to Inbox
+- `rspamd` needs some learning time for successful spam filtering

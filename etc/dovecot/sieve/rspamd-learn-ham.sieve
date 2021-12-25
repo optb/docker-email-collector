@@ -4,7 +4,7 @@ if environment :matches "imap.mailbox" "*" {
   set "mailbox" "${1}";
 }
 
-if string "${mailbox}" [ "Trash", "train_ham", "train_spam" ] {
+if string "${mailbox}" [ "Trash" ] {
   stop;
 }
 

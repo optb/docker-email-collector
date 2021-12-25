@@ -1,5 +1,6 @@
 #!/bin/bash
 
+chmod 0550 /dec/version.sh
 chmod 0550 /dec/dovecot/adduser.sh
 
 # Setup fetchmail
